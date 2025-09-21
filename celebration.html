@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>You Forgave Me! 🎉</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600;800&family=Great+Vibes&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0f1022;
+      --card: #1a1424;
+      --accent: #ff6b81;
+      --accent-2: #ffd1dc;
+      --glass: rgba(255, 255, 255, 0.04);
+    }
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: Poppins, system-ui, Segoe UI, Roboto, Arial;
+      background: radial-gradient(ellipse at 10% 10%, rgba(255, 107, 129, 0.06), transparent 10%), linear-gradient(180deg, #0b0b14 0%, #15202b 100%);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      overflow: hidden;
+      position: relative;
+    }
+    .celebration-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 3;
+      position: relative;
+    }
+    h1 {
+      font-family: 'Great Vibes', cursive;
+      font-size: 3rem;
+      color: var(--accent-2);
+      text-shadow: 0 4px 18px rgba(255, 107, 129, 0.14);
+      margin: 0 0 10px 0;
+    }
+    .final-message {
+      font-size: 1.2rem;
+      color: var(--accent);
+      margin-top: 20px;
+    }
+    #confetti-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .heart-decor {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .heart {
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      transform: rotate(-45deg);
+      opacity: 0.95;
+      animation-fill-mode: forwards;
+    }
+    .heart:before, .heart:after {
+      content:'';
+      position:absolute;
+      width:14px;
+      height:14px;
+      background:var(--accent);
+      border-radius:50%
+    }
+    .heart:before{top:-7px;left:0}
+    .heart:after{left:7px;top:0}
+    @keyframes floaty{
+      0%{transform:translateY(0) scale(1) rotate(-45deg); opacity:1}
+      100%{transform:translateY(-300px) scale(0.6) rotate(-45deg); opacity:0}
+    }
+    .burst-heart {
+        position: absolute;
+        width: 18px;
+        height: 18px;
+        transform: rotate(-45deg);
+        z-index: 4;
+        opacity: 0;
+    }
+    .burst-heart:before, .burst-heart:after {
+        content: '';
+        position: absolute;
+        width: 18px;
+        height: 18px;
+        background: var(--accent);
+        border-radius: 50%;
+    }
+    .burst-heart:before { top: -9px; left: 0; }
+    .burst-heart:after { left: 9px; top: 0; }
+    .circular-pic-container {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      overflow: hidden;
+      margin: 20px auto;
+      box-shadow: 0 0 0 5px var(--accent-2), 0 0 0 10px rgba(255, 209, 220, 0.4);
+      transition: box-shadow 0.1s ease-out;
+      z-index: 3;
+    }
+    .circular-pic {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+      transform: scale(1);
+      transition: transform 0.1s ease-out;
+    }
+    #beatWavesCanvas {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 2;
+    }
+  </style>
+</head>
+<body>
+  <div class="heart-decor" id="heartDecor"></div>
+  <div class="celebration-content">
+    <h1>Thank You!</h1>
+    <div class="circular-pic-container" id="picContainer">
+        <video id="vibeVideo" class="circular-pic" src="video.mp4" playsinline autoplay loop></video>
+        <canvas id="beatWavesCanvas"></canvas>
+    </div>
+    <p class="final-message">Your forgiveness means a lot to me. ❤️</p>
+  </div>
+  <canvas id="confetti-canvas"></canvas>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <script>
+    const VIDEO_PATH = "video.mp4"; 
+
+    document.getElementById('vibeVideo').src = VIDEO_PATH;
+
+    (function spawnDecorHearts(){
+      const container = document.getElementById('heartDecor');
+      const colors = ['#ff6b81','#ff8aa0','ffd1dc','ffb3c6'];
+      function make(){
+        const el = document.createElement('div');
+        el.className = 'heart';
+        const size = 8 + Math.random()*22;
+        el.style.width = size+'px'; el.style.height = size+'px';
+        el.style.left = Math.random()*100+'%';
+        el.style.top = 100 + Math.random()*10 + '%';
+        el.style.background = 'transparent';
+        el.style.transform = 'rotate(-45deg)';
+        el.style.filter = 'drop-shadow(0 2px 8px rgba(255,107,129,0.08))';
+        el.style.opacity = 0.9;
+        el.style.setProperty('animation', 'floaty '+(7+Math.random()*6)+'s linear');
+        el.style.setProperty('--accent', colors[Math.floor(Math.random()*colors.length)]);
+        container.appendChild(el);
+        setTimeout(()=>el.remove(), 7000 + Math.random()*2000);
+      }
+      for(let i=0;i<8;i++) setTimeout(make, i*300);
+      setInterval(make, 900);
+    })();
+
+    function burstHearts(x, y) {
+        for (let i = 0; i < 12; i++) {
+            const h = document.createElement('div');
+            h.className = 'burst-heart';
+            h.style.left = (x - 9 + (Math.random() - 0.5) * 120) + 'px';
+            h.style.top = (y - 9 + (Math.random() - 0.5) * 80) + 'px';
+            h.style.zIndex = 4;
+            document.body.appendChild(h);
+            const dx = (Math.random() - 0.5) * 200;
+            const dy = -40 + Math.random() * -160;
+            h.animate([
+                { transform: 'translateY(0) rotate(-45deg) scale(0)', opacity: 0 },
+                { transform: 'translateY(0) rotate(-45deg) scale(1)', opacity: 1, offset: 0.1 },
+                { transform: `translate(${dx}px,${dy}px) rotate(-60deg) scale(.6)`, opacity: 0 }
+            ], { duration: 900 + Math.random() * 600, easing: 'cubic-bezier(.2,.7,.1,1)' });
+            setTimeout(() => h.remove(), 1600);
+        }
+    }
+
+    window.onload = () => {
+      const vibeVideo = document.getElementById('vibeVideo');
+      const picContainer = document.getElementById('picContainer');
+      const beatWavesCanvas = document.getElementById('beatWavesCanvas');
+      
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const analyser = audioContext.createAnalyser();
+      
+      // To ensure the AudioContext starts when the user interacts,
+      // we'll listen for a click on the video itself.
+      vibeVideo.addEventListener('click', () => {
+        // Only attempt to resume and connect if it's not already playing
+        if (vibeVideo.paused) {
+          vibeVideo.play();
+        }
+        
+        // Resume the AudioContext
+        if (audioContext.state === 'suspended') {
+          audioContext.resume();
+        }
+        
+        // Connect the audio source only once
+        if (!vibeVideo.audioConnected) {
+          let source = audioContext.createMediaElementSource(vibeVideo);
+          source.connect(analyser);
+          analyser.connect(audioContext.destination);
+          vibeVideo.audioConnected = true;
+        }
+
+        analyser.fftSize = 256;
+        drawBeatWaves();
+      });
+
+      // Confetti burst on page load
+      const customConfetti = confetti.create(document.getElementById('confetti-canvas'), { resize: true, useWorker: true });
+
+      function launchConfetti() {
+        customConfetti({
+          particleCount: 150,
+          spread: 80,
+          startVelocity: 40,
+          colors: ['#ff6b81', '#ff9ab4', '#ffd1dc'],
+          shapes: ['heart', 'circle'],
+          origin: { y: 0.8, x: 0.5 }
+        });
+        setTimeout(() => {
+            customConfetti({
+                particleCount: 100,
+                spread: 70,
+                angle: 60,
+                colors: ['#ff6b81', '#fff', '#ffd1dc'],
+                shapes: ['circle'],
+                origin: { x: 0, y: 0.8 }
+            });
+        }, 400);
+        setTimeout(() => {
+            customConfetti({
+                particleCount: 100,
+                spread: 70,
+                angle: 120,
+                colors: ['#ff6b81', '#fff', '#ff9ab4'],
+                shapes: ['circle'],
+                origin: { x: 1, y: 0.8 }
+            });
+        }, 600);
+        
+        const picRect = picContainer.getBoundingClientRect();
+        const centerX = picRect.left + picRect.width / 2;
+        const centerY = picRect.top + picRect.height / 2;
+        burstHearts(centerX, centerY);
+      }
+      launchConfetti();
+
+      // Beat Waves & Video Vibe Visualization
+      const bufferLength = analyser.frequencyBinData.length;
+      const dataArray = new Uint8-Array(bufferLength);
+      const canvasCtx = beatWavesCanvas.getContext('2d');
+
+      function drawBeatWaves() {
+        requestAnimationFrame(drawBeatWaves);
+        analyser.getByteFrequencyData(dataArray);
+
+        let sum = 0;
+        for (let i = 0; i < bufferLength; i++) {
+          sum += dataArray[i];
+        }
+        let average = sum / bufferLength;
+
+        const scale = 1 + (average / 255) * 0.05;
+        vibeVideo.style.transform = `scale(${scale})`;
+        
+        const glowIntensity = (average / 255) * 10;
+        picContainer.style.boxShadow = `0 0 0 5px var(--accent-2), 0 0 0 ${10 + glowIntensity}px rgba(255, 209, 220, ${0.4 + (average / 255) * 0.4})`;
+
+        const picSize = picContainer.offsetWidth;
+        beatWavesCanvas.width = picSize + 60;
+        beatWavesCanvas.height = picSize + 60;
+        const centerX = beatWavesCanvas.width / 2;
+        const centerY = beatWavesCanvas.height / 2;
+        const radius = picSize / 2;
+
+        canvasCtx.clearRect(0, 0, beatWavesCanvas.width, beatWavesCanvas.height);
+        const barWidth = 3;
+        const barCount = bufferLength / 4;
+
+        for (let i = 0; i < barCount; i++) {
+          const barHeight = dataArray[i] * 0.4;
+          const angle = (i / barCount) * Math.PI * 2;
+          const x1 = centerX + Math.cos(angle) * (radius + 5);
+          const y1 = centerY + Math.sin(angle) * (radius + 5);
+          const x2 = centerX + Math.cos(angle) * (radius + 5 + barHeight);
+          const y2 = centerY + Math.sin(angle) * (radius + 5 + barHeight);
+
+          canvasCtx.beginPath();
+          canvasCtx.moveTo(x1, y1);
+          canvasCtx.lineTo(x2, y2);
+          canvasCtx.strokeStyle = `rgba(255, 107, 129, ${0.5 + (barHeight / 255) * 0.5})`;
+          canvasCtx.lineWidth = barWidth;
+          canvasCtx.stroke();
+        }
+      }
+    };
+  </script>
+</body>
+</html>
